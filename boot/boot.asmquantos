@@ -2,12 +2,12 @@
 [ORG 0x7C00]
 
 start:
-    cli
-    lgdt [gdt_descriptor]
+    cli                     ; disable interrupts
+    lgdt [gdt_descriptor]   ; load the GDT
     mov eax, cr0
-    or eax, 1
+    or eax, 1               ; set protected mode bit
     mov cr0, eax
-    jmp CODE_SEG:protected_mode
+    jmp CODE_SEG:protected_mode  ; far jump to flush pipeline
 
 [BITS 32]
 protected_mode:
@@ -17,16 +17,18 @@ protected_mode:
     mov es, ax
     mov fs, ax
     mov gs, ax
-    mov ebp, 0x90000
+    mov ebp, 0x90000        ; set up stack
     mov esp, ebp
 
+    ; print 'Q' directly to video memory
     mov byte [0xb8000], 'Q'
-    mov byte [0xb8001], 0x0f
+    mov byte [0xb8001], 0x0f  ; white on black
 
-    jmp $
+    jmp $                   ; hang
 
+; ── GDT ──────────────────────────────────────────────────────
 gdt_start:
-    dq 0x0
+    dq 0x0                  ; null descriptor
 
 gdt_code:
     dw 0xffff
