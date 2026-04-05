@@ -3,6 +3,19 @@
 
 start:
     cli
+    xor ax, ax
+    mov ds, ax
+    mov es, ax
+
+    ; load kernel from disk into 0x1000
+    mov ah, 0x02        ; BIOS read sectors
+    mov al, 15          ; number of sectors to read
+    mov ch, 0           ; cylinder 0
+    mov cl, 2           ; start from sector 2
+    mov dh, 0           ; head 0
+    mov bx, 0x1000      ; load to address 0x1000
+    int 0x13            ; BIOS disk interrupt
+
     lgdt [gdt_descriptor]
     mov eax, cr0
     or eax, 1
@@ -19,9 +32,7 @@ protected_mode:
     mov gs, ax
     mov ebp, 0x90000
     mov esp, ebp
-
-    mov byte [0xb8000], 'Q'
-    mov byte [0xb8001], 0x0f
+    call 0x1000
 
     jmp $
 
