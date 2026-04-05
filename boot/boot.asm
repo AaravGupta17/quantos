@@ -7,14 +7,13 @@ start:
     mov ds, ax
     mov es, ax
 
-    ; load kernel from disk into 0x1000
-    mov ah, 0x02        ; BIOS read sectors
-    mov al, 15          ; number of sectors to read
-    mov ch, 0           ; cylinder 0
-    mov cl, 2           ; start from sector 2
-    mov dh, 0           ; head 0
-    mov bx, 0x1000      ; load to address 0x1000
-    int 0x13            ; BIOS disk interrupt
+    mov ah, 0x02
+    mov al, 32          ; load 32 sectors instead of 15
+    mov ch, 0
+    mov cl, 2
+    mov dh, 0
+    mov bx, 0x1000
+    int 0x13
 
     lgdt [gdt_descriptor]
     mov eax, cr0
