@@ -7,8 +7,9 @@ start:
     mov ds, ax
     mov es, ax
 
+    ; load kernel
     mov ah, 0x02
-    mov al, 32          ; load 32 sectors instead of 15
+    mov al, 32
     mov ch, 0
     mov cl, 2
     mov dh, 0
@@ -29,8 +30,10 @@ protected_mode:
     mov es, ax
     mov fs, ax
     mov gs, ax
-    mov ebp, 0x90000
-    mov esp, ebp
+
+    ; set up stack well below kernel at 0x7000
+    mov esp, 0x7000
+
     call 0x1000
 
     jmp $
